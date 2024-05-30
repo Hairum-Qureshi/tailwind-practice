@@ -148,7 +148,7 @@ export default function Todo() {
 						})}
 					</>
 				) : (
-					<h3 className="mt-5 text-lg">You've completed all your tasks!</h3>
+					<h3 className="mt-5 text-lg">You've completed all your tasks! 🎉</h3>
 				)}
 			</div>
 		</div>
