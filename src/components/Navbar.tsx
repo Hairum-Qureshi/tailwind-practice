@@ -12,11 +12,24 @@ export default function Navbar() {
 				!showHamburgerMenu ? "z-0" : "z-10"
 			}`}
 		>
-			<nav className="bg-custom-nav-color w-full p-5 text-white flex items-center justify-center">
-				<div className="text-2xl">
-					<h1>
+			<nav className="bg-custom-nav-color w-full p-5 text-white flex items-center justify-center lg:justify-start">
+				<div className="inline-flex w-full box-border items-center">
+					<h1 className="text-2xl font-bold">
 						<Link to="/">Tracker</Link>
 					</h1>
+					<div className="lg:justify-start lg:block hidden ml-auto">
+						<ul className="flex items-center text-lg">
+							<li className="ml-4">
+								<Link to="/time-tracker">Time Tracker</Link>
+							</li>
+							<li className="ml-4">
+								<Link to="/to-dos">Todo List</Link>
+							</li>
+							<li className="ml-4">
+								<Link to="/contacts">Contacts</Link>
+							</li>
+						</ul>
+					</div>
 				</div>
 				<div
 					className="ml-auto inline-flex lg:hidden"
@@ -30,15 +43,15 @@ export default function Navbar() {
 				</div>
 			</nav>
 			{showHamburgerMenu && (
-				<div className="w-full h-40 bg-blue-300 lg:hidden lg:z-0  flex items-center justify-left">
-					<ul className="text-blue-950 text-xl p-8">
+				<div className="w-full h-40 bg-blue-300 lg:hidden lg:z-0 flex items-center justify-left">
+					<ul className="text-blue-950 text-xl p-8 space-y-2">
 						<li>
 							<Link to="/time-tracker">Time Tracker</Link>
 						</li>
-						<li className="mt-2">
+						<li>
 							<Link to="/to-dos">Todo List</Link>
 						</li>
-						<li className="mt-2">
+						<li>
 							<Link to="/contacts">Contacts</Link>
 						</li>
 					</ul>

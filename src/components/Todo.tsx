@@ -21,7 +21,7 @@ export default function Todo() {
 	} = useTodos();
 
 	return (
-		<div className="p-8 text-sky-950 text-center">
+		<div className="p-8 text-sky-950 text-center absolute lg:relative top-16">
 			<div className="border-2 border-gray-400 rounded-md m-auto w-full lg:w-2/5 bg-gray-100 h-auto pb-8">
 				<h2 className="text-2xl pt-2">List your to-dos!</h2>
 				<input
