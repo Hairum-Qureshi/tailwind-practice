@@ -1,94 +1,23 @@
-import { useEffect, useState } from "react";
+import useTodos from "../hooks/useTodos";
 
 // TODO - need to add active class to the edit and delete task buttons
-// TODO - move code above into a custom hook
 
 export default function Todo() {
-	const savedTodos: string | null = localStorage.getItem("todos");
-	const [task, setTask] = useState("");
-	const [tasks, setTasks] = useState<string[]>(
-		JSON.parse(savedTodos ? savedTodos : "[]") || []
-	);
-	const [editMode, setEditMode] = useState(false);
-	const [taskToEditIdx, setTaskToEditIdx] = useState(-1);
-	const [editTaskVal, setEditedTaskVal] = useState("");
-
-	function addTask(event: React.KeyboardEvent) {
-		if (event.key === "Enter") {
-			if (task.trim()) {
-				if (tasks.length > 0 && !tasks.includes(task.trim())) {
-					setTasks([...tasks, task]);
-					setTask("");
-				} else if (tasks.includes(task.trim())) {
-					alert("Cannot add duplicate tasks!");
-				} else {
-					setTasks([task]);
-					setTask("");
-				}
-			}
-		}
-	}
-
-	function deleteTask(index: number) {
-		const tasksCopy: string[] = [...tasks];
-		const taskToDelete: string = tasksCopy[index];
-		const confirmation: boolean = confirm(
-			`Are you sure you would like to delete the task "${taskToDelete}"?`
-		);
-		if (confirmation) {
-			const filteredTasks: string[] = tasksCopy.filter(
-				(task: string) => task !== taskToDelete
-			);
-			setTasks(filteredTasks);
-			setTaskToEditIdx(-1);
-		}
-	}
-
-	function deleteAllTasks() {
-		const confirmation: boolean = confirm(
-			`Are you sure you would like to delete all ${tasks.length} tasks?`
-		);
-		if (confirmation) {
-			setTasks([]);
-			setTaskToEditIdx(-1);
-		}
-	}
-
-	function handleEditMode(index: number) {
-		if (!editMode) {
-			setEditMode(true);
-			setTaskToEditIdx(index);
-		} else {
-			setEditMode(false);
-			setTaskToEditIdx(-1);
-		}
-	}
-
-	function editTask(e: React.KeyboardEvent) {
-		const task: string = editTaskVal.trim();
-		const tasksCopy: string[] = [...tasks];
-		if (e.key === "Enter") {
-			if (task) {
-				if (tasks.includes(task) && tasks[taskToEditIdx] === task) {
-					setEditMode(false);
-				} else if (tasks.includes(task)) {
-					alert("Cannot add duplicate tasks!");
-				} else {
-					tasksCopy[taskToEditIdx] = task;
-					setTasks(tasksCopy);
-					setEditMode(false);
-				}
-			}
-		}
-	}
-
-	useEffect(() => {
-		if (taskToEditIdx !== -1) {
-			setEditedTaskVal(tasks[taskToEditIdx]);
-		}
-
-		localStorage.setItem("todos", JSON.stringify(tasks));
-	}, [taskToEditIdx, task, tasks]);
+	const {
+		addTask,
+		deleteTask,
+		deleteAllTasks,
+		handleEditMode,
+		editTask,
+		taskSetter,
+		editedTaskSetter,
+		editModeSetter,
+		task,
+		tasks,
+		taskToEditIdx,
+		editTaskVal,
+		editMode
+	} = useTodos();
 
 	return (
 		<div className="p-8 text-sky-950 text-center">
@@ -99,7 +28,7 @@ export default function Todo() {
 					value={task}
 					placeholder="Enter a task..."
 					className="mt-2 border-2 border-gray-600 w-11/12 box-border outline-0 p-2 rounded-md"
-					onChange={e => setTask(e.target.value)}
+					onChange={e => taskSetter(e.target.value)}
 					onKeyDown={e => addTask(e)}
 				/>
 				{tasks.length > 0 ? (
@@ -120,7 +49,7 @@ export default function Todo() {
 										<input
 											type="text"
 											value={editTaskVal}
-											onChange={e => setEditedTaskVal(e.target.value)}
+											onChange={e => editedTaskSetter(e.target.value)}
 											onKeyDown={e => editTask(e)}
 											className="w-full mr-2 outline-0"
 										/>
@@ -132,7 +61,7 @@ export default function Todo() {
 										{editMode && index === taskToEditIdx ? (
 											<span
 												className="text-red-500 bg-red-900 rounded-full text-center align-middle p-2 w-7 h-7 flex items-center justify-center hover:cursor-pointer"
-												onClick={() => setEditMode(false)}
+												onClick={() => editModeSetter(false)}
 											>
 												❌
 											</span>
