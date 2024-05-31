@@ -34,6 +34,7 @@ export default function Todo() {
 				(task: string) => task !== taskToDelete
 			);
 			setTasks(filteredTasks);
+			setTaskToEditIdx(-1);
 		}
 	}
 
@@ -43,6 +44,7 @@ export default function Todo() {
 		);
 		if (confirmation) {
 			setTasks([]);
+			setTaskToEditIdx(-1);
 		}
 	}
 
@@ -59,10 +61,12 @@ export default function Todo() {
 	function editTask(e: React.KeyboardEvent) {
 		const task: string = editTaskVal.trim();
 		const tasksCopy: string[] = [...tasks];
-		console.log(e);
 		if (e.key === "Enter") {
 			if (task) {
-				if (tasks.includes(task)) {
+				if (tasks.includes(task) && tasks[taskToEditIdx] === task) {
+					//! Need to fix this because if you don't make any changes to the task and press enter, it shouldn't alert the user duplicates aren't allowed. This should only apply if the user changes the task to match another task
+					setEditMode(false);
+				} else if (tasks.includes(task)) {
 					alert("Cannot add duplicate tasks!");
 				} else {
 					tasksCopy[taskToEditIdx] = task;
@@ -74,7 +78,9 @@ export default function Todo() {
 	}
 
 	useEffect(() => {
-		setEditedTaskVal(tasks[taskToEditIdx]);
+		if (taskToEditIdx !== -1) {
+			setEditedTaskVal(tasks[taskToEditIdx]);
+		}
 	}, [taskToEditIdx]);
 
 	// TODO - need to add active class to the edit and delete task buttons
@@ -104,7 +110,7 @@ export default function Todo() {
 							return (
 								<div
 									className="mt-4 border-2 border-gray-600 w-11/12 box-border h-full p-2 text-left m-auto inline-flex"
-									key={Math.floor(index * Date.now())}
+									key={index}
 								>
 									{editMode && index === taskToEditIdx ? (
 										<input
@@ -118,7 +124,7 @@ export default function Todo() {
 										<h3 className="flex items-center justify-center">{task}</h3>
 									)}
 
-									<div className="ml-auto text-sm inline-flex">
+									<div className="ml-auto text-sm inline-flex" key={index}>
 										{editMode && index === taskToEditIdx ? (
 											<span
 												className="text-red-500 bg-red-900 rounded-full text-center align-middle p-2 w-7 h-7 flex items-center justify-center hover:cursor-pointer"
