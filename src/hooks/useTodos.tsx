@@ -123,6 +123,7 @@ export default function useTodos(): TodoListHandlers {
 		editTask,
 		taskSetter,
 		editedTaskSetter,
+		editModeSetter,
 		task,
 		tasks,
 		taskToEditIdx,
