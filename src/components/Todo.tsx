@@ -1,8 +1,14 @@
 import { useEffect, useState } from "react";
 
+// TODO - need to add active class to the edit and delete task buttons
+// TODO - move code above into a custom hook
+
 export default function Todo() {
+	const savedTodos: string | null = localStorage.getItem("todos");
 	const [task, setTask] = useState("");
-	const [tasks, setTasks] = useState<string[]>([]);
+	const [tasks, setTasks] = useState<string[]>(
+		JSON.parse(savedTodos ? savedTodos : "[]") || []
+	);
 	const [editMode, setEditMode] = useState(false);
 	const [taskToEditIdx, setTaskToEditIdx] = useState(-1);
 	const [editTaskVal, setEditedTaskVal] = useState("");
@@ -64,7 +70,6 @@ export default function Todo() {
 		if (e.key === "Enter") {
 			if (task) {
 				if (tasks.includes(task) && tasks[taskToEditIdx] === task) {
-					//! Need to fix this because if you don't make any changes to the task and press enter, it shouldn't alert the user duplicates aren't allowed. This should only apply if the user changes the task to match another task
 					setEditMode(false);
 				} else if (tasks.includes(task)) {
 					alert("Cannot add duplicate tasks!");
@@ -81,10 +86,9 @@ export default function Todo() {
 		if (taskToEditIdx !== -1) {
 			setEditedTaskVal(tasks[taskToEditIdx]);
 		}
-	}, [taskToEditIdx]);
 
-	// TODO - need to add active class to the edit and delete task buttons
-	// !FIX - when you have more than one to-do, the edit feature is buggy when it comes to typing
+		localStorage.setItem("todos", JSON.stringify(tasks));
+	}, [taskToEditIdx, task, tasks]);
 
 	return (
 		<div className="p-8 text-sky-950 text-center">
