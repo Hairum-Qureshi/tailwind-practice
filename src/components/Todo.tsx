@@ -1,6 +1,7 @@
 import useTodos from "../hooks/useTodos";
 
 // TODO - need to add active class to the edit and delete task buttons
+// TODO - need to add hover class to the edit and delete task buttons
 
 export default function Todo() {
 	const {
@@ -42,7 +43,7 @@ export default function Todo() {
 						{tasks.map((task: string, index: number) => {
 							return (
 								<div
-									className="mt-4 border-2 border-gray-600 w-11/12 box-border h-full p-2 text-left m-auto inline-flex"
+									className="mt-4 border-2 border-gray-600 w-11/12 box-border h-full p-2 text-left m-auto inline-flex bg-slate-300"
 									key={index}
 								>
 									{editMode && index === taskToEditIdx ? (
@@ -60,7 +61,7 @@ export default function Todo() {
 									<div className="ml-auto text-sm inline-flex" key={index}>
 										{editMode && index === taskToEditIdx ? (
 											<span
-												className="text-red-500 bg-red-900 rounded-full text-center align-middle p-2 w-7 h-7 flex items-center justify-center hover:cursor-pointer"
+												className="text-red-500 bg-red-800 hover:bg-red-900 active:bg-red-700 rounded-full text-center align-middle p-2 w-7 h-7 flex items-center justify-center hover:cursor-pointer"
 												onClick={() => editModeSetter(false)}
 											>
 												❌
@@ -68,13 +69,13 @@ export default function Todo() {
 										) : (
 											<>
 												<span
-													className="text-yellow-600 mr-2 bg-gray-300 rounded-full text-center align-middle p-2 w-7 h-7 flex items-center justify-center hover:cursor-pointer"
+													className="text-yellow-600 mr-2 bg-slate-400 hover:bg-slate-500 active:bg-slate-600 rounded-full text-center align-middle p-2 w-7 h-7 flex items-center justify-center hover:cursor-pointer"
 													onClick={() => handleEditMode(index)}
 												>
 													✏️
 												</span>
 												<span
-													className="text-red-500 bg-red-900 rounded-full text-center align-middle p-2 w-7 h-7 flex items-center justify-center hover:cursor-pointer"
+													className="text-red-500 bg-red-800 hover:bg-red-900 active:bg-red-700 rounded-full text-center align-middle p-2 w-7 h-7 flex items-center justify-center hover:cursor-pointer"
 													onClick={() => deleteTask(index)}
 												>
 													❌
