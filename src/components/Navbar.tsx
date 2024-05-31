@@ -31,15 +31,15 @@ export default function Navbar() {
 			</nav>
 			{showHamburgerMenu && (
 				<div className="w-full h-40 bg-blue-300 lg:hidden lg:z-0  flex items-center justify-left">
-					<ul className="text-blue-950 text-2xl p-8">
+					<ul className="text-blue-950 text-xl p-8">
 						<li>
-							<Link to="#">Time Tracker</Link>
+							<Link to="/time-tracker">Time Tracker</Link>
 						</li>
 						<li className="mt-2">
-							<Link to="#">Todo List</Link>
+							<Link to="/to-dos">Todo List</Link>
 						</li>
 						<li className="mt-2">
-							<Link to="#">Contacts</Link>
+							<Link to="/contacts">Contacts</Link>
 						</li>
 					</ul>
 				</div>
