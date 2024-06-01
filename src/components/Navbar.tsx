@@ -15,7 +15,7 @@ export default function Navbar() {
 			<nav className="bg-custom-nav-color w-full p-5 text-white flex items-center justify-center lg:justify-start">
 				<div className="inline-flex w-full box-border items-center">
 					<h1 className="text-2xl font-bold">
-						<Link to="/">Tracker</Link>
+						<Link to="/">Tracker Site</Link>
 					</h1>
 					<div className="lg:justify-start lg:block hidden ml-auto">
 						<ul className="flex items-center text-lg">
