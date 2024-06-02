@@ -7,6 +7,7 @@ interface Task {
 	task_name: string;
 	task_id: string;
 	time_elapsed: string;
+	date: string;
 }
 
 // TODO - need to save time data to local storage
@@ -61,7 +62,8 @@ export default function TimeTracker() {
 					task_id: uuidv4().toString(),
 					time_elapsed: `${hours < 10 ? "0" + hours : hours}:${
 						minutes < 10 ? "0" + minutes : minutes
-					}:${seconds < 10 ? "0" + seconds : seconds}`
+					}:${seconds < 10 ? "0" + seconds : seconds}`,
+					date: new Date().toLocaleDateString("en-US")
 				}
 			]);
 		} else {
@@ -72,7 +74,8 @@ export default function TimeTracker() {
 					task_id: uuidv4().toString(),
 					time_elapsed: `${hours < 10 ? "0" + hours : hours}:${
 						minutes < 10 ? "0" + minutes : minutes
-					}:${seconds < 10 ? "0" + seconds : seconds}`
+					}:${seconds < 10 ? "0" + seconds : seconds}`,
+					date: new Date().toLocaleDateString("en-US")
 				}
 			]);
 		}
@@ -135,6 +138,7 @@ export default function TimeTracker() {
 									setSeconds(0);
 									setMinutes(0);
 									setHours(0);
+									setTaskName("");
 									recordTask();
 								}}
 							>
@@ -143,6 +147,16 @@ export default function TimeTracker() {
 						)}
 					</div>
 				</div>
+			</div>
+
+			<div className="border-2 w-full box-border border-slate-200 mt-4 h-full text-left p-1">
+				{taskData.map((task: Task) => {
+					return (
+						<div className="h-full p-2 bg-slate-300 mt-2 first-of-type:mt-0">
+							{task.task_name}
+						</div>
+					);
+				})}
 			</div>
 		</div>
 	);
