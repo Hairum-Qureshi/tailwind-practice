@@ -36,9 +36,12 @@ export default function Navbar() {
 					onClick={() => setShowHamburgerMenu(!showHamburgerMenu)}
 				>
 					{!showHamburgerMenu ? (
-						<FontAwesomeIcon icon={faBars} className="ml-auto text-xl" />
+						<FontAwesomeIcon
+							icon={faBars}
+							className="ml-auto text-xl hover:cursor-pointer"
+						/>
 					) : (
-						<FontAwesomeIcon icon={faX} />
+						<FontAwesomeIcon icon={faX} className="hover:cursor-pointer" />
 					)}
 				</div>
 			</nav>
