@@ -19,6 +19,8 @@ interface Task {
 // TODO - need to add the computer view of the interface
 // TODO - display the task/time data
 // TODO - add a total time worked as well
+// TODO - add hover and active classes to the play/pause and start/end button
+// TODO - add ability to allow users to edit their times
 
 export default function TimeTracker() {
 	const [timer, setTimer] = useState(false);
@@ -88,6 +90,18 @@ export default function TimeTracker() {
 			}
 		} else {
 			alert("Please enter the name of your task");
+		}
+	}
+
+	function deleteTask(task_id: string) {
+		const task: Task = taskData.find((task: Task) => task.task_id === task_id)!;
+
+		const confirmation: boolean = confirm(
+			`Are you sure you would like to delete the task "${task.task_name}"?`
+		);
+
+		if (confirmation) {
+			setTaskData(taskData.filter((task: Task) => task.task_id !== task_id));
 		}
 	}
 
@@ -175,7 +189,10 @@ export default function TimeTracker() {
 							</div>
 							<div className="bg-blue-400 flex text-white">
 								<div className="p-2 font-bold">{task.time_elapsed}</div>
-								<div className="ml-auto bg-red-500 flex items-center justify-center w-9 hover:cursor-pointer hover:bg-red-600 active:bg-red-700">
+								<div
+									className="ml-auto bg-red-500 flex items-center justify-center w-9 hover:cursor-pointer hover:bg-red-600 active:bg-red-700"
+									onClick={() => deleteTask(task.task_id)}
+								>
 									<FontAwesomeIcon icon={faTrash} />
 								</div>
 							</div>
