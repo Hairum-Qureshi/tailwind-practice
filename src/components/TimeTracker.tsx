@@ -19,7 +19,6 @@ interface Task {
 // TODO - need to add the computer view of the interface
 // TODO - display the task/time data
 // TODO - add a total time worked as well
-// TODO - add hover and active classes to the buttons
 
 export default function TimeTracker() {
 	const [timer, setTimer] = useState(false);
@@ -170,13 +169,13 @@ export default function TimeTracker() {
 							</div>
 							<div className="flex">
 								<div className="p-2">{task.task_name}</div>
-								<div className="ml-auto bg-orange-500 flex items-center justify-center w-9 text-white">
+								<div className="ml-auto bg-orange-500 flex items-center justify-center w-9 text-white hover:cursor-pointer hover:bg-orange-400 active:bg-orange-600">
 									<FontAwesomeIcon icon={faPencil} />
 								</div>
 							</div>
 							<div className="bg-blue-400 flex text-white">
 								<div className="p-2 font-bold">{task.time_elapsed}</div>
-								<div className="ml-auto bg-red-500 flex items-center justify-center w-9">
+								<div className="ml-auto bg-red-500 flex items-center justify-center w-9 hover:cursor-pointer hover:bg-red-600 active:bg-red-700">
 									<FontAwesomeIcon icon={faTrash} />
 								</div>
 							</div>
