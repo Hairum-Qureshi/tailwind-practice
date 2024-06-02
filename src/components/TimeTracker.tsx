@@ -1,4 +1,9 @@
-import { faPause, faPlay, faTrash } from "@fortawesome/free-solid-svg-icons";
+import {
+	faPause,
+	faPencil,
+	faPlay,
+	faTrash
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
@@ -13,6 +18,7 @@ interface Task {
 // TODO - need to save time data to local storage
 // TODO - need to add the computer view of the interface
 // TODO - display the task/time data
+// TODO - add a total time worked as well
 
 export default function TimeTracker() {
 	const [timer, setTimer] = useState(false);
@@ -24,7 +30,7 @@ export default function TimeTracker() {
 	const [taskData, setTaskData] = useState<Task[]>([]);
 
 	useEffect(() => {
-		let interval: any;
+		let interval: ReturnType<typeof setInterval>;
 		if (timer && !paused) {
 			interval = setInterval(() => {
 				setSeconds(prevSeconds => {
@@ -55,29 +61,33 @@ export default function TimeTracker() {
 	}:${seconds < 10 ? "0" + seconds : seconds}`;
 
 	function recordTask() {
-		if (taskData.length === 0) {
-			setTaskData([
-				{
-					task_name: taskName,
-					task_id: uuidv4().toString(),
-					time_elapsed: `${hours < 10 ? "0" + hours : hours}:${
-						minutes < 10 ? "0" + minutes : minutes
-					}:${seconds < 10 ? "0" + seconds : seconds}`,
-					date: new Date().toLocaleDateString("en-US")
-				}
-			]);
+		if (taskName.trim()) {
+			if (taskData.length === 0) {
+				setTaskData([
+					{
+						task_name: taskName,
+						task_id: uuidv4().toString(),
+						time_elapsed: `${hours < 10 ? "0" + hours : hours}:${
+							minutes < 10 ? "0" + minutes : minutes
+						}:${seconds < 10 ? "0" + seconds : seconds}`,
+						date: new Date().toLocaleDateString("en-US")
+					}
+				]);
+			} else {
+				setTaskData([
+					{
+						task_name: taskName,
+						task_id: uuidv4().toString(),
+						time_elapsed: `${hours < 10 ? "0" + hours : hours}:${
+							minutes < 10 ? "0" + minutes : minutes
+						}:${seconds < 10 ? "0" + seconds : seconds}`,
+						date: new Date().toLocaleDateString("en-US")
+					},
+					...taskData
+				]);
+			}
 		} else {
-			setTaskData([
-				{
-					task_name: taskName,
-					task_id: uuidv4().toString(),
-					time_elapsed: `${hours < 10 ? "0" + hours : hours}:${
-						minutes < 10 ? "0" + minutes : minutes
-					}:${seconds < 10 ? "0" + seconds : seconds}`,
-					date: new Date().toLocaleDateString("en-US")
-				},
-				...taskData
-			]);
+			alert("Please enter the name of your task");
 		}
 	}
 
@@ -148,11 +158,22 @@ export default function TimeTracker() {
 			<div className="border-2 w-full box-border border-slate-200 mt-4 h-full text-left p-1">
 				{taskData.map((task: Task) => {
 					return (
-						<div className="h-full bg-slate-300 mt-2 first-of-type:mt-0">
-							<div className="p-2">{task.task_name}</div>
-							<div className="bg-slate-400 flex">
+						<div
+							className="h-full bg-blue-200 mt-2 first-of-type:mt-0"
+							key={task.task_id}
+						>
+							<div className="text-right text-sm bg-blue-300 p-0.5">
+								{task.date}
+							</div>
+							<div className="flex">
+								<div className="p-2">{task.task_name}</div>
+								<div className="ml-auto bg-orange-500 flex items-center justify-center w-9 text-white">
+									<FontAwesomeIcon icon={faPencil} />
+								</div>
+							</div>
+							<div className="bg-blue-400 flex text-white">
 								<div className="p-2 font-bold">{task.time_elapsed}</div>
-								<div className="ml-auto bg-red-500 flex items-center justify-center w-9 text-white">
+								<div className="ml-auto bg-red-500 flex items-center justify-center w-9">
 									<FontAwesomeIcon icon={faTrash} />
 								</div>
 							</div>
