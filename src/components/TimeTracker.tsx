@@ -19,6 +19,7 @@ interface Task {
 // TODO - need to add the computer view of the interface
 // TODO - display the task/time data
 // TODO - add a total time worked as well
+// TODO - add hover and active classes to the buttons
 
 export default function TimeTracker() {
 	const [timer, setTimer] = useState(false);
@@ -102,7 +103,7 @@ export default function TimeTracker() {
 					placeholder="Enter task name"
 					value={taskName}
 					onChange={e => setTaskName(e.target.value)}
-					className="lg:hidden w-full p-1 outline-none"
+					className="lg:hidden w-full p-2 outline-none"
 				/>
 				<div className="flex">
 					<h1 className="p-1 text-2xl items-center justify-center bg-slate-300 h-full w-full">
@@ -139,12 +140,14 @@ export default function TimeTracker() {
 							<button
 								className=" bg-red-500 text-white p-2"
 								onClick={() => {
-									setTimer(false);
-									setPaused(false);
-									setSeconds(0);
-									setMinutes(0);
-									setHours(0);
-									setTaskName("");
+									if (taskName) {
+										setTimer(false);
+										setPaused(false);
+										setSeconds(0);
+										setMinutes(0);
+										setHours(0);
+										setTaskName("");
+									}
 									recordTask();
 								}}
 							>
