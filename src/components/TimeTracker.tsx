@@ -1,4 +1,4 @@
-import { faPause, faPlay } from "@fortawesome/free-solid-svg-icons";
+import { faPause, faPlay, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
@@ -68,7 +68,6 @@ export default function TimeTracker() {
 			]);
 		} else {
 			setTaskData([
-				...taskData,
 				{
 					task_name: taskName,
 					task_id: uuidv4().toString(),
@@ -76,14 +75,11 @@ export default function TimeTracker() {
 						minutes < 10 ? "0" + minutes : minutes
 					}:${seconds < 10 ? "0" + seconds : seconds}`,
 					date: new Date().toLocaleDateString("en-US")
-				}
+				},
+				...taskData
 			]);
 		}
 	}
-
-	useEffect(() => {
-		console.log(taskData);
-	}, [taskData]);
 
 	return (
 		<div className="p-8 text-sky-950 text-center absolute lg:relative top-16 w-full m-auto lg:w-2/3">
@@ -152,8 +148,14 @@ export default function TimeTracker() {
 			<div className="border-2 w-full box-border border-slate-200 mt-4 h-full text-left p-1">
 				{taskData.map((task: Task) => {
 					return (
-						<div className="h-full p-2 bg-slate-300 mt-2 first-of-type:mt-0">
-							{task.task_name}
+						<div className="h-full bg-slate-300 mt-2 first-of-type:mt-0">
+							<div className="p-2">{task.task_name}</div>
+							<div className="bg-slate-400 flex">
+								<div className="p-2 font-bold">{task.time_elapsed}</div>
+								<div className="ml-auto bg-red-500 flex items-center justify-center w-9 text-white">
+									<FontAwesomeIcon icon={faTrash} />
+								</div>
+							</div>
 						</div>
 					);
 				})}
