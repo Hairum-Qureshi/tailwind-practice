@@ -9,6 +9,10 @@ interface Task {
 	time_elapsed: string;
 }
 
+// TODO - need to save time data to local storage
+// TODO - need to add the computer view of the interface
+// TODO - display the task/time data
+
 export default function TimeTracker() {
 	const [timer, setTimer] = useState(false);
 	const [paused, setPaused] = useState(false);
@@ -44,6 +48,10 @@ export default function TimeTracker() {
 			return () => clearInterval(interval);
 		}
 	}, [timer, paused]);
+
+	document.title = `${hours < 10 ? "0" + hours : hours}:${
+		minutes < 10 ? "0" + minutes : minutes
+	}:${seconds < 10 ? "0" + seconds : seconds}`;
 
 	function recordTask() {
 		if (taskData.length === 0) {
