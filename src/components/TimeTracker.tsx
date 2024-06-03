@@ -21,6 +21,7 @@ interface Task {
 // TODO - add a total time worked as well
 // TODO - add hover and active classes to the play/pause and start/end button
 // TODO - add ability to allow users to edit their times
+// TODO - for the task that have already been saved, add the option to allow users to edit those times and save the new time
 
 export default function TimeTracker() {
 	const [timer, setTimer] = useState(false);
@@ -30,27 +31,48 @@ export default function TimeTracker() {
 	const [seconds, setSeconds] = useState(0);
 	const [taskName, setTaskName] = useState("");
 	const [taskData, setTaskData] = useState<Task[]>([]);
+	const [editTime, setEditTime] = useState(false);
+	const [newEditedTime, setNewEditedTime] = useState("");
 
-	useEffect(() => {
-		let interval: ReturnType<typeof setInterval>;
-		if (timer && !paused) {
-			interval = setInterval(() => {
-				setSeconds(prevSeconds => {
-					if (prevSeconds < 59) {
-						return prevSeconds + 1;
+	function updateLiveTime() {
+		setSeconds(prevSeconds => {
+			if (prevSeconds < 59) {
+				return prevSeconds + 1;
+			} else {
+				setMinutes(prevMinutes => {
+					if (prevMinutes < 59) {
+						return prevMinutes + 1;
 					} else {
-						setMinutes(prevMinutes => {
-							if (prevMinutes < 59) {
-								return prevMinutes + 1;
-							} else {
-								setHours(prevHours => prevHours + 1);
-								return 0;
-							}
-						});
+						setHours(prevHours => prevHours + 1);
 						return 0;
 					}
 				});
-			}, 1000);
+				return 0;
+			}
+		});
+	}
+
+	let interval: ReturnType<typeof setInterval>;
+	useEffect(() => {
+		if (timer && !paused) {
+			interval = setInterval(updateLiveTime, 1000);
+			// interval = setInterval(() => {
+			// setSeconds(prevSeconds => {
+			// 	if (prevSeconds < 59) {
+			// 		return prevSeconds + 1;
+			// 	} else {
+			// 		setMinutes(prevMinutes => {
+			// 			if (prevMinutes < 59) {
+			// 				return prevMinutes + 1;
+			// 			} else {
+			// 				setHours(prevHours => prevHours + 1);
+			// 				return 0;
+			// 			}
+			// 		});
+			// 		return 0;
+			// 	}
+			// });
+			// }, 1000);
 			return () => clearInterval(interval);
 		}
 		if (paused) {
@@ -105,6 +127,42 @@ export default function TimeTracker() {
 		}
 	}
 
+	function updateTime(e: React.KeyboardEvent) {
+		if (e.key === "Enter" && !paused) {
+			clearInterval(interval);
+			const newTime: string[] = newEditedTime.split(":");
+			setHours(parseInt(newTime[0]));
+			setMinutes(parseInt(newTime[1]));
+			setSeconds(parseInt(newTime[2]));
+		}
+		if (e.key === "Enter" && paused) {
+			// TODO - add a guard to make sure the user enters time in 00:00:00 format
+			const newTime: string[] = newEditedTime.split(":");
+			setHours(parseInt(newTime[0]));
+			setMinutes(parseInt(newTime[1]));
+			setSeconds(parseInt(newTime[2]));
+			setPaused(false);
+			setEditTime(false);
+		}
+	}
+
+	function editLiveTime() {
+		setEditTime(true);
+		setPaused(true);
+	}
+
+	useEffect(() => {
+		if (editTime && paused) {
+			setNewEditedTime(
+				hours === 0 && minutes == 0 && seconds == 0
+					? "00:00:00"
+					: `${hours < 10 ? "0" + hours : hours}:${
+							minutes < 10 ? "0" + minutes : minutes
+					  }:${seconds < 10 ? "0" + seconds : seconds}`
+			);
+		}
+	}, [editTime, hours, minutes, seconds]);
+
 	return (
 		<div className="p-8 text-sky-950 text-center absolute lg:relative top-16 w-full m-auto lg:w-2/3">
 			<h1 className="text-3xl text-blue-600 font-bold mb-5">
@@ -119,11 +177,25 @@ export default function TimeTracker() {
 					className="lg:hidden w-full p-2 outline-none"
 				/>
 				<div className="flex">
-					<h1 className="p-1 text-2xl items-center justify-center bg-slate-300 h-full w-full">
-						{hours < 10 ? "0" + hours : hours}:
-						{minutes < 10 ? "0" + minutes : minutes}:
-						{seconds < 10 ? "0" + seconds : seconds}
-					</h1>
+					{editTime ? (
+						<input
+							type="text"
+							value={newEditedTime}
+							className="p-1 text-2xl outline-none text-center bg-slate-300 w-full"
+							placeholder="Enter time in 00:00:00 format"
+							onChange={e => setNewEditedTime(e.target.value)}
+							onKeyDown={e => updateTime(e)}
+						/>
+					) : (
+						<h1
+							className="p-1 text-2xl items-center justify-center bg-slate-300 h-full w-full"
+							onClick={editLiveTime}
+						>
+							{hours < 10 ? "0" + hours : hours}:
+							{minutes < 10 ? "0" + minutes : minutes}:
+							{seconds < 10 ? "0" + seconds : seconds}
+						</h1>
+					)}
 					<div className="flex ml-auto">
 						<button className=" bg-blue-500 text-white p-2">
 							{!paused ? (
@@ -160,6 +232,7 @@ export default function TimeTracker() {
 										setMinutes(0);
 										setHours(0);
 										setTaskName("");
+										setNewEditedTime("00:00:00");
 									}
 									recordTask();
 								}}
@@ -199,6 +272,11 @@ export default function TimeTracker() {
 						</div>
 					);
 				})}
+				{taskData.length === 0 && (
+					<h1 className="text-center text-xl">
+						Your saved timed tasks will appear here
+					</h1>
+				)}
 			</div>
 		</div>
 	);
