@@ -6,6 +6,9 @@ export default {
 			colors: {
 				"custom-color": "#074973",
 				"custom-nav-color": "#032859"
+			},
+			fontFamily: {
+				Kanit: ["Kanit", "sans-serif"]
 			}
 		}
 	},
