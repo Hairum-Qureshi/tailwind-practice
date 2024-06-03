@@ -17,10 +17,9 @@ interface Task {
 
 // TODO - need to save time data to local storage
 // TODO - need to add the computer view of the interface
-// TODO - display the task/time data
 // TODO - add a total time worked as well
 // TODO - add hover and active classes to the play/pause and start/end button
-// TODO - add ability to allow users to edit their times
+// TODO - fix issue where if you manually press the unpause button after editing the time, the time won't run (it does when you press enter, however)
 // TODO - for the task that have already been saved, add the option to allow users to edit those times and save the new time
 
 export default function TimeTracker() {
@@ -56,23 +55,6 @@ export default function TimeTracker() {
 	useEffect(() => {
 		if (timer && !paused) {
 			interval = setInterval(updateLiveTime, 1000);
-			// interval = setInterval(() => {
-			// setSeconds(prevSeconds => {
-			// 	if (prevSeconds < 59) {
-			// 		return prevSeconds + 1;
-			// 	} else {
-			// 		setMinutes(prevMinutes => {
-			// 			if (prevMinutes < 59) {
-			// 				return prevMinutes + 1;
-			// 			} else {
-			// 				setHours(prevHours => prevHours + 1);
-			// 				return 0;
-			// 			}
-			// 		});
-			// 		return 0;
-			// 	}
-			// });
-			// }, 1000);
 			return () => clearInterval(interval);
 		}
 		if (paused) {
@@ -128,27 +110,32 @@ export default function TimeTracker() {
 	}
 
 	function updateTime(e: React.KeyboardEvent) {
+		const isValid: boolean =
+			/^([0-1]?[0-9]|2[0-4]):([0-5][0-9])(:[0-5][0-9])?$/.test(e.target.value);
+
 		if (e.key === "Enter" && !paused) {
-			clearInterval(interval);
-			const newTime: string[] = newEditedTime.split(":");
-			setHours(parseInt(newTime[0]));
-			setMinutes(parseInt(newTime[1]));
-			setSeconds(parseInt(newTime[2]));
+			if (isValid) {
+				clearInterval(interval);
+				const newTime: string[] = newEditedTime.split(":");
+				setHours(parseInt(newTime[0]));
+				setMinutes(parseInt(newTime[1]));
+				setSeconds(parseInt(newTime[2]));
+			} else {
+				alert("Time must be in 00:00:00 format");
+			}
 		}
 		if (e.key === "Enter" && paused) {
-			// TODO - add a guard to make sure the user enters time in 00:00:00 format
-			const newTime: string[] = newEditedTime.split(":");
-			setHours(parseInt(newTime[0]));
-			setMinutes(parseInt(newTime[1]));
-			setSeconds(parseInt(newTime[2]));
-			setPaused(false);
-			setEditTime(false);
+			if (isValid) {
+				const newTime: string[] = newEditedTime.split(":");
+				setHours(parseInt(newTime[0]));
+				setMinutes(parseInt(newTime[1]));
+				setSeconds(parseInt(newTime[2]));
+				setPaused(false);
+				setEditTime(false);
+			} else {
+				alert("Time must be in 00:00:00 format");
+			}
 		}
-	}
-
-	function editLiveTime() {
-		setEditTime(true);
-		setPaused(true);
 	}
 
 	useEffect(() => {
@@ -189,7 +176,10 @@ export default function TimeTracker() {
 					) : (
 						<h1
 							className="p-1 text-2xl items-center justify-center bg-slate-300 h-full w-full"
-							onClick={editLiveTime}
+							onClick={() => {
+								setEditTime(true);
+								setPaused(true);
+							}}
 						>
 							{hours < 10 ? "0" + hours : hours}:
 							{minutes < 10 ? "0" + minutes : minutes}:
@@ -255,8 +245,8 @@ export default function TimeTracker() {
 								{task.date}
 							</div>
 							<div className="flex">
-								<div className="p-2">{task.task_name}</div>
-								<div className="ml-auto bg-orange-500 flex items-center justify-center w-9 text-white hover:cursor-pointer hover:bg-orange-400 active:bg-orange-600">
+								<div className="p-2 font-Kanit text-lg">{task.task_name}</div>
+								<div className="ml-auto bg-orange-500 flex items-center justify-center w-9  text-white hover:cursor-pointer hover:bg-orange-400 active:bg-orange-600">
 									<FontAwesomeIcon icon={faPencil} />
 								</div>
 							</div>
