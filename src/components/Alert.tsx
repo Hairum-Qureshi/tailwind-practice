@@ -19,13 +19,5 @@ export default function Alert({ isError, icon, message }: Props) {
 				<p className="ml-2">Warning Here</p>
 			</div>
 		</div>
-		// <div
-		// 	className={`w-full box-border bg-red-600 p-2 rounded-md relative z-10 border-2 text-white border-red-600 -top-3`}
-		// >
-		// 	<div className="flex items-center">
-		// 		<FontAwesomeIcon icon={faCircleExclamation} />
-		// 		<p className="ml-2">Warning Here</p>
-		// 	</div>
-		// </div>
 	);
 }
