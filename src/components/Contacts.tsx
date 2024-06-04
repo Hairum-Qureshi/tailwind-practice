@@ -14,6 +14,7 @@ interface Contact {
 // TODO - clear the inputs after a user adds a new contact
 // TODO - add hover and active classes to buttons
 // TODO - consider adding pagination as well for the contacts
+// TODO - need to also check for duplicate contacts
 
 export default function Contacts() {
 	const [contacts, setContacts] = useState<Contact[]>([]);
@@ -41,6 +42,10 @@ export default function Contacts() {
 					}
 				]);
 			}
+		} else {
+			alert(
+				"Please make sure you have all fields filled out and your phone number formatted correctly"
+			);
 		}
 	}
 
@@ -78,7 +83,7 @@ export default function Contacts() {
 				</div>
 			</div>
 			<div className="mt-2 p-2 w-full box-border rounded-md">
-				<h1 className="text-xl">Your Saved Contacts:</h1>
+				<h1 className="text-xl">Your Saved Contacts ({contacts.length}):</h1>
 				<input
 					type="search"
 					placeholder="Search"
