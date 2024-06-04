@@ -68,7 +68,7 @@ export default function Contacts() {
 					<label>Enter new contact's phone number:</label>
 					<input
 						type="tel"
-						placeholder="Phone Number"
+						placeholder="(xxx)-xxx-xxxx"
 						className="border-2 border-slate-400 outline-none w-full p-2 rounded"
 						onChange={e => setPhoneNumber(e.target.value)}
 					/>
