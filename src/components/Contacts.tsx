@@ -13,6 +13,7 @@ interface Contact {
 // TODO - make the search bar functioning and show results on key input
 // TODO - clear the inputs after a user adds a new contact
 // TODO - add hover and active classes to buttons
+// TODO - consider adding pagination as well for the contacts
 
 export default function Contacts() {
 	const [contacts, setContacts] = useState<Contact[]>([]);
