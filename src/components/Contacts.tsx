@@ -11,6 +11,8 @@ interface Contact {
 // TODO - add an edit and delete button -> when the user presses edit, populate the form fields with that contact's details
 // TODO - save to local storage
 // TODO - make the search bar functioning and show results on key input
+// TODO - clear the inputs after a user adds a new contact
+// TODO - add hover and active classes to buttons
 
 export default function Contacts() {
 	const [contacts, setContacts] = useState<Contact[]>([]);
