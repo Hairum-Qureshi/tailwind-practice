@@ -1,6 +1,7 @@
 import validator from "validator";
 import { v4 as uuidv4 } from "uuid";
 import { useState } from "react";
+import Alert from "./Alert";
 
 interface Contact {
 	id: string;
@@ -23,34 +24,39 @@ export default function Contacts() {
 
 	function addContact() {
 		const isValidPhoneNumber = validator.isMobilePhone(phoneNumber);
-		if (isValidPhoneNumber && contactName) {
-			if (contacts.length === 0) {
-				setContacts([
-					{
-						id: uuidv4(),
-						name: contactName,
-						phone_number: phoneNumber
-					}
-				]);
+		if (isValidPhoneNumber) {
+			if (contactName) {
+				if (contacts.length === 0) {
+					setContacts([
+						{
+							id: uuidv4(),
+							name: contactName,
+							phone_number: phoneNumber
+						}
+					]);
+				} else {
+					setContacts([
+						...contacts,
+						{
+							id: uuidv4(),
+							name: contactName,
+							phone_number: phoneNumber
+						}
+					]);
+				}
 			} else {
-				setContacts([
-					...contacts,
-					{
-						id: uuidv4(),
-						name: contactName,
-						phone_number: phoneNumber
-					}
-				]);
+				alert("Please make sure to provide a contact name");
 			}
 		} else {
 			alert(
-				"Please make sure you have all fields filled out and your phone number formatted correctly"
+				"Please double check if you have provided a phone number/check if it's in the correct format"
 			);
 		}
 	}
 
 	return (
 		<div className="p-8 text-sky-950 absolute lg:relative top-16 w-full m-auto lg:w-2/3">
+			<Alert />
 			<h2 className="text-2xl font-black font-Kanit lg:text-left text-center">
 				ADD YOUR CONTACTS:
 			</h2>

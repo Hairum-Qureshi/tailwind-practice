@@ -1,4 +1,5 @@
 import {
+	faCheck,
 	faPause,
 	faPencil,
 	faPlay,
@@ -19,8 +20,9 @@ interface Task {
 // TODO - need to add the computer view of the interface
 // TODO - add a total time worked as well
 // TODO - add hover and active classes to the play/pause and start/end button
-// TODO - fix issue where if you manually press the unpause button after editing the time, the time won't run (it does when you press enter, however)
+// !BUG - fix issue where if you manually press the unpause button after editing the time, the time won't run (it does when you press enter, however)
 // TODO - for the task that have already been saved, add the option to allow users to edit those times and save the new time
+// !BUG - if you edit the time before pressing start and then hit start then end, the time is saved as "00:00:00"
 
 export default function TimeTracker() {
 	const [timer, setTimer] = useState(false);
@@ -32,6 +34,42 @@ export default function TimeTracker() {
 	const [taskData, setTaskData] = useState<Task[]>([]);
 	const [editTime, setEditTime] = useState(false);
 	const [newEditedTime, setNewEditedTime] = useState("");
+	const [editMode, setEditMode] = useState(false);
+	const [indexToEdit, setIndexToEdit] = useState(-1);
+
+	// : (
+	// 	<div className="ml-auto bg-green-500 flex items-center justify-center w-9  text-white hover:cursor-pointer hover:bg-green-400 active:bg-green-600">
+	// 		<FontAwesomeIcon icon={faCheck} />
+	// 	</div>
+	// )}
+
+	function totalHours() {
+		// const hours: string[] = [];
+		// const minutes: string[] = [];
+		// const seconds: string[] = [];
+		let hours = 0;
+		let minutes = 0;
+		let seconds = 0;
+
+		if (taskData.length > 0) {
+			const task_times: string[] = taskData.map(
+				(task: Task) => task.time_elapsed
+			);
+
+			task_times.forEach((elapsed_time: string) => {
+				const [hrs, mins, secs] = elapsed_time.split(":");
+				hours += parseInt(hrs);
+				minutes += parseInt(mins);
+				seconds += parseInt(secs);
+
+				// hours.push(hrs);
+				// minutes.push(mins);
+				// seconds.push(secs);
+			});
+
+			console.log(hours, minutes, seconds);
+		}
+	}
 
 	function updateLiveTime() {
 		setSeconds(prevSeconds => {
@@ -62,9 +100,9 @@ export default function TimeTracker() {
 		}
 	}, [timer, paused]);
 
-	document.title = `${hours < 10 ? "0" + hours : hours}:${
-		minutes < 10 ? "0" + minutes : minutes
-	}:${seconds < 10 ? "0" + seconds : seconds}`;
+	useEffect(() => {
+		totalHours();
+	}, [taskData]);
 
 	function recordTask() {
 		if (taskName.trim()) {
@@ -138,6 +176,12 @@ export default function TimeTracker() {
 		}
 	}
 
+	function editTimedTask(task_id: string, index: number) {
+		setEditMode(true);
+		console.log(index);
+		setIndexToEdit(index);
+	}
+
 	useEffect(() => {
 		if (editTime && paused) {
 			setNewEditedTime(
@@ -148,6 +192,10 @@ export default function TimeTracker() {
 					  }:${seconds < 10 ? "0" + seconds : seconds}`
 			);
 		}
+
+		document.title = `${hours < 10 ? "0" + hours : hours}:${
+			minutes < 10 ? "0" + minutes : minutes
+		}:${seconds < 10 ? "0" + seconds : seconds}`;
 	}, [editTime, hours, minutes, seconds]);
 
 	return (
@@ -235,7 +283,7 @@ export default function TimeTracker() {
 			</div>
 
 			<div className="border-2 w-full box-border border-slate-200 mt-4 h-full text-left p-1">
-				{taskData.map((task: Task) => {
+				{taskData.map((task: Task, index: number) => {
 					return (
 						<div
 							className="h-full bg-blue-200 mt-2 first-of-type:mt-0"
@@ -245,10 +293,31 @@ export default function TimeTracker() {
 								{task.date}
 							</div>
 							<div className="flex">
-								<div className="p-2 font-Kanit text-lg">{task.task_name}</div>
-								<div className="ml-auto bg-orange-500 flex items-center justify-center w-9  text-white hover:cursor-pointer hover:bg-orange-400 active:bg-orange-600">
-									<FontAwesomeIcon icon={faPencil} />
-								</div>
+								{index === indexToEdit ? (
+									<>
+										<div className="p-2 font-Kanit text-lg">
+											{task.task_name}
+										</div>
+										<div
+											className="ml-auto bg-orange-500 flex items-center justify-center w-9  text-white hover:cursor-pointer hover:bg-orange-400 active:bg-orange-600"
+											onClick={() => editTimedTask(task.task_id, index)}
+										>
+											<FontAwesomeIcon icon={faPencil} />
+										</div>
+									</>
+								) : (
+									<>
+										<div className="p-2 font-Kanit text-lg">
+											{task.task_name}
+										</div>
+										<div
+											className="ml-auto bg-orange-500 flex items-center justify-center w-9  text-white hover:cursor-pointer hover:bg-orange-400 active:bg-orange-600"
+											onClick={() => editTimedTask(task.task_id, index)}
+										>
+											<FontAwesomeIcon icon={faPencil} />
+										</div>
+									</>
+								)}
 							</div>
 							<div className="bg-blue-400 flex text-white">
 								<div className="p-2 font-bold">{task.time_elapsed}</div>
@@ -271,28 +340,3 @@ export default function TimeTracker() {
 		</div>
 	);
 }
-
-// export default function TimeTracker() {
-// 	return (
-// 		<div className="p-8 text-sky-950 text-center absolute lg:relative top-16">
-// 			<h1 className="text-3xl text-blue-600 font-bold mb-5">
-// 				TRACK YOUR TIME!
-// 			</h1>
-// 			<div className="border-1 w-2/3 border-gray-300 m-auto">
-// 				<div className="flex m-auto w-full">
-// 					<input
-// 						type="text"
-// 						placeholder="Enter task name"
-// 						className="w-full outline-none p-1"
-// 					/>
-// 					<div className="flex items-center ml-auto">
-// 						<h1 className="p-1 text-2xl flex items-center bg-slate-300 h-full">
-// 							00:00:00
-// 						</h1>
-// 						<button className=" bg-blue-400 text-white p-2 w-40">Start</button>
-// 					</div>
-// 				</div>
-// 			</div>
-// 		</div>
-// 	);
-// }
