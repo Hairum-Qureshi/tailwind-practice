@@ -1,13 +1,44 @@
-import { useState } from "react";
 import validator from "validator";
+import { v4 as uuidv4 } from "uuid";
+import { useState } from "react";
+
+interface Contact {
+	id: string;
+	name: string;
+	phone_number: string;
+}
+
+// TODO - add an edit and delete button -> when the user presses edit, populate the form fields with that contact's details
+// TODO - save to local storage
+// TODO - make the search bar functioning and show results on key input
 
 export default function Contacts() {
+	const [contacts, setContacts] = useState<Contact[]>([]);
 	const [contactName, setContactName] = useState("");
 	const [phoneNumber, setPhoneNumber] = useState("");
 
 	function addContact() {
 		const isValidPhoneNumber = validator.isMobilePhone(phoneNumber);
-		alert(isValidPhoneNumber);
+		if (isValidPhoneNumber && contactName) {
+			if (contacts.length === 0) {
+				setContacts([
+					{
+						id: uuidv4(),
+						name: contactName,
+						phone_number: phoneNumber
+					}
+				]);
+			} else {
+				setContacts([
+					...contacts,
+					{
+						id: uuidv4(),
+						name: contactName,
+						phone_number: phoneNumber
+					}
+				]);
+			}
+		}
 	}
 
 	return (
@@ -22,6 +53,7 @@ export default function Contacts() {
 						type="text"
 						placeholder="Name"
 						className="border-2 border-slate-400 outline-none w-full p-2 rounded"
+						onChange={e => setContactName(e.target.value)}
 					/>
 				</div>
 				<div className="mt-4">
@@ -50,12 +82,27 @@ export default function Contacts() {
 					className="mt-5 border-2 rounded p-2 w-full outline-none"
 				/>
 				<div>
-					<div className="w-full box-border border-2 border-gray-200 p-2 mt-5 rounded-md bg-slate-100 flex">
-						<div className="flex items-center w-full">
-							<h2 className="text-lg">Name Here</h2>
-							<p className="text-gray-400 ml-auto">(123)-456-7890</p>
-						</div>
-					</div>
+					{contacts.length > 0 ? (
+						contacts.map((contact: Contact) => {
+							return (
+								<div
+									className="w-full box-border border-2 border-gray-200 p-2 mt-5 rounded-md bg-slate-100 flex"
+									key={contact.id}
+								>
+									<div className="flex items-center w-full">
+										<h2 className="text-lg">{contact.name}</h2>
+										<p className="text-gray-400 ml-auto">
+											{contact.phone_number}
+										</p>
+									</div>
+								</div>
+							);
+						})
+					) : (
+						<h1 className="text-xl text-center mt-5">
+							Enter a contact to be added here
+						</h1>
+					)}
 				</div>
 			</div>
 		</div>
