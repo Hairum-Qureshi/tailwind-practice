@@ -56,7 +56,7 @@ export default function Contacts() {
 			</h2>
 			<div className="border-2 border-slate-200 mt-2 p-2 w-full box-border rounded-md bg-slate-100">
 				<div>
-					<label>Enter person's name:</label>
+					<label>Enter new contact's name:</label>
 					<input
 						type="text"
 						placeholder="Name"
@@ -65,7 +65,7 @@ export default function Contacts() {
 					/>
 				</div>
 				<div className="mt-4">
-					<label>Enter their phone number:</label>
+					<label>Enter new contact's phone number:</label>
 					<input
 						type="tel"
 						placeholder="Phone Number"
