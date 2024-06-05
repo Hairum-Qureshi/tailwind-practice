@@ -56,7 +56,9 @@ export default function Contacts() {
 			modifiedAreaCode
 		);
 
-		if (isPossiblePhoneNumber(phoneNumber)) {
+		if (!isPossiblePhoneNumber(phoneNumber) && !contactName) {
+			createAlert(true, "Please provide a phone number and contact name", 2000);
+		} else if (isPossiblePhoneNumber(phoneNumber)) {
 			if (contactName) {
 				if (contacts.length === 0) {
 					setContacts([
