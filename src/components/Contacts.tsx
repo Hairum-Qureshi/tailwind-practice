@@ -20,7 +20,6 @@ interface Contact {
 // TODO - add hover and active classes to buttons
 // TODO - consider adding pagination as well for the contacts
 // TODO - need to also check for duplicate contacts
-// TODO - may need to change validator library because it won't accept phone numbers in the form: "+1 (123)-456-7890"
 
 export default function Contacts() {
 	const [contacts, setContacts] = useState<Contact[]>([]);
@@ -55,7 +54,7 @@ export default function Contacts() {
 						{
 							id: uuidv4(),
 							name: contactName,
-							phone_number: phoneNumber
+							phone_number: formattedPhoneNumber
 						}
 					]);
 				}
