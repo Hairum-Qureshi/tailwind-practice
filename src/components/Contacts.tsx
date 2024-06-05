@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Alert from "./Alert";
 import PhoneInput, {
 	formatPhoneNumberIntl,
@@ -21,12 +21,31 @@ interface Contact {
 // TODO - consider adding pagination as well for the contacts
 // TODO - need to also check for duplicate contacts
 
+export interface AlertContent {
+	isError: boolean;
+	message: string;
+}
+
 export default function Contacts() {
 	const [contacts, setContacts] = useState<Contact[]>([]);
 	const [contactName, setContactName] = useState("");
 	const [phoneNumber, setPhoneNumber] = useState("");
 	const [showAlert, setShowAlert] = useState(false);
-	const [alertContent, setAlertContent] = useState();
+	const [alertContent, setAlertContent] = useState<AlertContent>({
+		isError: false,
+		message: ""
+	});
+
+	function createAlert(isAnError: boolean, message: string, duration: number) {
+		setAlertContent({
+			isError: isAnError,
+			message
+		});
+		setShowAlert(true);
+		setTimeout(() => {
+			setShowAlert(false);
+		}, duration);
+	}
 
 	function addContact() {
 		let formattedPhoneNumber: string = formatPhoneNumberIntl(phoneNumber);
@@ -36,7 +55,6 @@ export default function Contacts() {
 			area_code,
 			modifiedAreaCode
 		);
-		console.log(formattedPhoneNumber);
 
 		if (isPossiblePhoneNumber(phoneNumber)) {
 			if (contactName) {
@@ -48,6 +66,7 @@ export default function Contacts() {
 							phone_number: formattedPhoneNumber
 						}
 					]);
+					createAlert(false, "Successfully added contact!", 500);
 				} else {
 					setContacts([
 						...contacts,
@@ -57,20 +76,23 @@ export default function Contacts() {
 							phone_number: formattedPhoneNumber
 						}
 					]);
+					createAlert(false, "Successfully added contact!", 500);
 				}
 			} else {
-				alert("Please make sure to provide a contact name");
+				createAlert(true, "Please make sure to provide a contact name", 2000);
 			}
 		} else {
-			alert(
-				"Please double check if you have provided a phone number/check if it's in the correct format"
+			createAlert(
+				true,
+				"Please double check if you have provided a phone number. If you have, check if it's in the correct format",
+				2000
 			);
 		}
 	}
 
 	return (
 		<div className="p-8 text-sky-950 absolute lg:relative top-16 w-full m-auto lg:w-2/3">
-			{showAlert && <Alert />}
+			{showAlert && <Alert alertContent={alertContent} />}
 			<h2 className="text-2xl font-black font-Kanit lg:text-left text-center">
 				ADD YOUR CONTACTS:
 			</h2>
