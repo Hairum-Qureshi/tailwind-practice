@@ -1,7 +1,11 @@
-import validator from "validator";
 import { v4 as uuidv4 } from "uuid";
 import { useState } from "react";
 import Alert from "./Alert";
+import PhoneInput, {
+	formatPhoneNumberIntl,
+	isPossiblePhoneNumber
+} from "react-phone-number-input";
+import "react-phone-number-input/style.css";
 
 interface Contact {
 	id: string;
@@ -16,22 +20,33 @@ interface Contact {
 // TODO - add hover and active classes to buttons
 // TODO - consider adding pagination as well for the contacts
 // TODO - need to also check for duplicate contacts
+// TODO - may need to change validator library because it won't accept phone numbers in the form: "+1 (123)-456-7890"
 
 export default function Contacts() {
 	const [contacts, setContacts] = useState<Contact[]>([]);
 	const [contactName, setContactName] = useState("");
 	const [phoneNumber, setPhoneNumber] = useState("");
+	const [showAlert, setShowAlert] = useState(false);
+	const [alertContent, setAlertContent] = useState();
 
 	function addContact() {
-		const isValidPhoneNumber = validator.isMobilePhone(phoneNumber);
-		if (isValidPhoneNumber) {
+		let formattedPhoneNumber: string = formatPhoneNumberIntl(phoneNumber);
+		let area_code: string = formattedPhoneNumber.substring(3, 6);
+		const modifiedAreaCode: string = `(${area_code})`;
+		formattedPhoneNumber = formattedPhoneNumber.replace(
+			area_code,
+			modifiedAreaCode
+		);
+		console.log(formattedPhoneNumber);
+
+		if (isPossiblePhoneNumber(phoneNumber)) {
 			if (contactName) {
 				if (contacts.length === 0) {
 					setContacts([
 						{
 							id: uuidv4(),
 							name: contactName,
-							phone_number: phoneNumber
+							phone_number: formattedPhoneNumber
 						}
 					]);
 				} else {
@@ -56,7 +71,7 @@ export default function Contacts() {
 
 	return (
 		<div className="p-8 text-sky-950 absolute lg:relative top-16 w-full m-auto lg:w-2/3">
-			<Alert />
+			{showAlert && <Alert />}
 			<h2 className="text-2xl font-black font-Kanit lg:text-left text-center">
 				ADD YOUR CONTACTS:
 			</h2>
@@ -72,11 +87,15 @@ export default function Contacts() {
 				</div>
 				<div className="mt-4">
 					<label>Enter new contact's phone number:</label>
-					<input
-						type="tel"
+					<PhoneInput
+						defaultCountry="US"
 						placeholder="(xxx)-xxx-xxxx"
-						className="border-2 border-slate-400 outline-none w-full p-2 rounded"
-						onChange={e => setPhoneNumber(e.target.value)}
+						numberInputProps={{
+							className:
+								"border-2 border-slate-400 outline-none w-full p-2 rounded"
+						}}
+						// className="border-2 border-slate-400 outline-none w-full p-2 rounded"
+						onChange={setPhoneNumber}
 					/>
 				</div>
 				<div className="mt-3">
