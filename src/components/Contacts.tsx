@@ -6,6 +6,12 @@ import PhoneInput, {
 	isPossiblePhoneNumber
 } from "react-phone-number-input";
 import "react-phone-number-input/style.css";
+import {
+	faCopy,
+	faPenToSquare,
+	faTrash
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 interface Contact {
 	id: string;
@@ -71,12 +77,12 @@ export default function Contacts() {
 					createAlert(false, "Successfully added contact!", 500);
 				} else {
 					setContacts([
-						...contacts,
 						{
 							id: uuidv4(),
 							name: contactName,
 							phone_number: formattedPhoneNumber
-						}
+						},
+						...contacts
 					]);
 					createAlert(false, "Successfully added contact!", 500);
 				}
@@ -142,7 +148,7 @@ export default function Contacts() {
 						contacts.map((contact: Contact) => {
 							return (
 								<div
-									className="w-full box-border border-2 border-gray-200 p-2 mt-5 rounded-md bg-slate-100 flex"
+									className="w-full box-border border-2 border-gray-200 p-2 mt-5 rounded-md bg-slate-100 flex select-none h-fit break-words"
 									key={contact.id}
 								>
 									<div className="flex items-center w-full">
@@ -150,6 +156,20 @@ export default function Contacts() {
 										<p className="text-gray-400 ml-auto">
 											{contact.phone_number}
 										</p>
+										<div className="flex items-center">
+											<FontAwesomeIcon
+												icon={faTrash}
+												className="ml-2 border-2 border-slate-400 rounded bg-red-400 p-1 hover:bg-red-500 hover:text-white hover:cursor-pointer active:bg-red-600"
+											/>
+											<FontAwesomeIcon
+												icon={faPenToSquare}
+												className="ml-2 border-2 border-slate-400 rounded bg-orange-400 p-1 hover:bg-orange-500 hover:cursor-pointer active:bg-orange-600"
+											/>
+											<FontAwesomeIcon
+												icon={faCopy}
+												className="ml-2 hidden lg:block border-2 border-slate-400 rounded bg-blue-400 p-1 hover:bg-blue-500 hover:text-white hover:cursor-pointer active:bg-blue-600"
+											/>
+										</div>
 									</div>
 								</div>
 							);
