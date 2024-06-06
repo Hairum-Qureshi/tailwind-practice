@@ -102,7 +102,7 @@ export default function Contacts() {
 	}
 
 	// Search contacts functionality:
-	const filteredContacts = useMemo(() => {
+	const filteredContacts: Contact[] = useMemo(() => {
 		return contacts.filter((contact: Contact) => {
 			return contact.name.toLowerCase().includes(searchPhrase.toLowerCase());
 		});
@@ -150,7 +150,7 @@ export default function Contacts() {
 				<h1 className="text-xl">Your Saved Contacts ({contacts.length}):</h1>
 				<input
 					type="search"
-					placeholder="Search"
+					placeholder="Search contact by name"
 					className="mt-5 border-2 rounded p-2 w-full outline-none"
 					onInput={e => {
 						setSearchPhrase(e.target.value);
@@ -189,7 +189,8 @@ export default function Contacts() {
 						})
 					) : (
 						<h1 className="text-xl text-center mt-5">
-							Enter a contact to be added here
+							No contact found. Try searching a different name or adding a new
+							contact.
 						</h1>
 					)}
 				</div>
