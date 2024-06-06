@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Alert from "./Alert";
 import PhoneInput, {
 	formatPhoneNumberIntl,
@@ -26,6 +26,7 @@ interface Contact {
 // TODO - add hover and active classes to buttons
 // TODO - consider adding pagination as well for the contacts
 // TODO - need to also check for duplicate contacts
+// TODO - add character limit for the contact name
 
 export interface AlertContent {
 	isError: boolean;
@@ -41,6 +42,8 @@ export default function Contacts() {
 		isError: false,
 		message: ""
 	});
+	const [searchPhrase, setSearchPhrase] = useState("");
+	const [searching, isSearching] = useState(false);
 
 	function createAlert(isAnError: boolean, message: string, duration: number) {
 		setAlertContent({
@@ -98,6 +101,13 @@ export default function Contacts() {
 		}
 	}
 
+	// Search contacts functionality:
+	const filteredContacts = useMemo(() => {
+		return contacts.filter((contact: Contact) => {
+			return contact.name.toLowerCase().includes(searchPhrase.toLowerCase());
+		});
+	}, [contacts, searchPhrase]);
+
 	return (
 		<div className="p-8 text-sky-950 absolute lg:relative top-16 w-full m-auto lg:w-2/3">
 			{showAlert && <Alert alertContent={alertContent} />}
@@ -142,33 +152,36 @@ export default function Contacts() {
 					type="search"
 					placeholder="Search"
 					className="mt-5 border-2 rounded p-2 w-full outline-none"
+					onInput={e => {
+						setSearchPhrase(e.target.value);
+					}}
 				/>
 				<div>
-					{contacts.length > 0 ? (
-						contacts.map((contact: Contact) => {
+					{filteredContacts.length > 0 ? (
+						filteredContacts.map((contact: Contact) => {
 							return (
 								<div
-									className="w-full box-border border-2 border-gray-200 p-2 mt-5 rounded-md bg-slate-100 flex select-none h-fit break-words"
+									className="w-full box-border border-2 border-gray-200 p-2 mt-5 rounded-md bg-slate-100 flex select-none h-auto"
 									key={contact.id}
 								>
-									<div className="flex items-center w-full">
-										<h2 className="text-lg">{contact.name}</h2>
-										<p className="text-gray-400 ml-auto">
-											{contact.phone_number}
-										</p>
-										<div className="flex items-center">
-											<FontAwesomeIcon
-												icon={faTrash}
-												className="ml-2 border-2 border-slate-400 rounded bg-red-400 p-1 hover:bg-red-500 hover:text-white hover:cursor-pointer active:bg-red-600"
-											/>
-											<FontAwesomeIcon
-												icon={faPenToSquare}
-												className="ml-2 border-2 border-slate-400 rounded bg-orange-400 p-1 hover:bg-orange-500 hover:cursor-pointer active:bg-orange-600"
-											/>
-											<FontAwesomeIcon
-												icon={faCopy}
-												className="ml-2 hidden lg:block border-2 border-slate-400 rounded bg-blue-400 p-1 hover:bg-blue-500 hover:text-white hover:cursor-pointer active:bg-blue-600"
-											/>
+									<div className="flex flex-col w-full box-border">
+										<h2 className="text-xl font-bold">{contact.name}</h2>
+										<div className="flex justify-between items-center mt-2">
+											<p className="text-gray-400">{contact.phone_number}</p>
+											<div className="flex items-center">
+												<FontAwesomeIcon
+													icon={faTrash}
+													className="ml-2 border-2 border-slate-400 rounded bg-red-400 p-1 hover:bg-red-500 text-zinc-100 hover:cursor-pointer active:bg-red-600"
+												/>
+												<FontAwesomeIcon
+													icon={faPenToSquare}
+													className="ml-2 border-2 border-slate-400 active:text-white rounded bg-orange-400 p-1 hover:bg-orange-500 hover:cursor-pointer active:bg-orange-600"
+												/>
+												<FontAwesomeIcon
+													icon={faCopy}
+													className="ml-2 hidden lg:block border-2 border-slate-400 rounded bg-blue-400 p-1 hover:bg-blue-500 hover:text-white hover:cursor-pointer active:bg-blue-600"
+												/>
+											</div>
 										</div>
 									</div>
 								</div>
