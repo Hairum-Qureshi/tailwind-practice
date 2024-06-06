@@ -21,11 +21,9 @@ interface Contact {
 
 // TODO - add an edit and delete button -> when the user presses edit, populate the form fields with that contact's details
 // TODO - save to local storage
-// TODO - make the search bar functioning and show results on key input
 // TODO - clear the inputs after a user adds a new contact
 // TODO - add hover and active classes to buttons
 // TODO - consider adding pagination as well for the contacts
-// TODO - need to also check for duplicate contacts
 // TODO - add character limit for the contact name
 
 export interface AlertContent {
@@ -69,25 +67,34 @@ export default function Contacts() {
 			createAlert(true, "Please provide a phone number and contact name", 2000);
 		} else if (isPossiblePhoneNumber(phoneNumber)) {
 			if (contactName) {
+				const new_contact: Contact = {
+					id: uuidv4(),
+					name: contactName,
+					phone_number: formattedPhoneNumber
+				};
+
 				if (contacts.length === 0) {
-					setContacts([
-						{
-							id: uuidv4(),
-							name: contactName,
-							phone_number: formattedPhoneNumber
-						}
-					]);
+					setContacts([new_contact]);
 					createAlert(false, "Successfully added contact!", 500);
 				} else {
-					setContacts([
-						{
-							id: uuidv4(),
-							name: contactName,
-							phone_number: formattedPhoneNumber
-						},
-						...contacts
-					]);
-					createAlert(false, "Successfully added contact!", 500);
+					let formattedPhoneNumber: string = formatPhoneNumberIntl(phoneNumber);
+					let area_code: string = formattedPhoneNumber.substring(3, 6);
+					const modifiedAreaCode: string = `(${area_code})`;
+					formattedPhoneNumber = formattedPhoneNumber.replace(
+						area_code,
+						modifiedAreaCode
+					);
+
+					const duplicateFound: boolean = contacts.some(
+						(contact: Contact) => contact.phone_number === formattedPhoneNumber
+					);
+
+					if (!duplicateFound) {
+						setContacts([new_contact, ...contacts]);
+						createAlert(false, "Successfully added contact!", 500);
+					} else {
+						createAlert(true, "Duplicate phone number found", 1000);
+					}
 				}
 			} else {
 				createAlert(true, "Please make sure to provide a contact name", 2000);
