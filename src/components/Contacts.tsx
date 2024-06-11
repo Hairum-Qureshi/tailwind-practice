@@ -41,7 +41,6 @@ export default function Contacts() {
 		message: ""
 	});
 	const [searchPhrase, setSearchPhrase] = useState("");
-	const [searching, isSearching] = useState(false);
 
 	function createAlert(isAnError: boolean, message: string, duration: number) {
 		setAlertContent({
@@ -102,7 +101,7 @@ export default function Contacts() {
 		} else {
 			createAlert(
 				true,
-				"Please double check if you have provided a phone number. If you have, check if it's in the correct format",
+				"Please double check if you have provided a phone number. If you have, check if it's in the correct format: (xxx)-xxx-xxxx",
 				2000
 			);
 		}
@@ -114,6 +113,11 @@ export default function Contacts() {
 			return contact.name.toLowerCase().includes(searchPhrase.toLowerCase());
 		});
 	}, [contacts, searchPhrase]);
+
+	function copyContact(contact_name: string, contact_phoneNumber: string) {
+		navigator.clipboard.writeText(`${contact_name} -> ${contact_phoneNumber}`);
+		createAlert(false, "Successfully copied contact!", 500);
+	}
 
 	return (
 		<div className="p-8 text-sky-950 absolute lg:relative top-16 w-full m-auto lg:w-2/3">
@@ -186,7 +190,10 @@ export default function Contacts() {
 												/>
 												<FontAwesomeIcon
 													icon={faCopy}
-													className="ml-2 hidden lg:block border-2 border-slate-400 rounded bg-blue-400 p-1 hover:bg-blue-500 hover:text-white hover:cursor-pointer active:bg-blue-600"
+													onClick={() =>
+														copyContact(contact.name, contact.phone_number)
+													}
+													className="ml-2 border-2 border-slate-400 rounded bg-blue-400 p-1 hover:bg-blue-500 hover:text-white hover:cursor-pointer active:bg-blue-600"
 												/>
 											</div>
 										</div>
