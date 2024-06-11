@@ -115,8 +115,15 @@ export default function Contacts() {
 	}, [contacts, searchPhrase]);
 
 	function copyContact(contact_name: string, contact_phoneNumber: string) {
-		navigator.clipboard.writeText(`${contact_name} -> ${contact_phoneNumber}`);
-		createAlert(false, "Successfully copied contact!", 500);
+		const phoneNumber_dashes: string = contact_phoneNumber.replace(/\s+/g, "-");
+
+		navigator.clipboard.writeText(
+			`${contact_name} -> ${phoneNumber_dashes.slice(
+				0,
+				2
+			)} ${phoneNumber_dashes.slice(3, phoneNumber_dashes.length)}`
+		);
+		createAlert(false, "Copied contact!", 500);
 	}
 
 	return (
