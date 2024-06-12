@@ -24,7 +24,6 @@ interface Contact {
 // TODO - clear the inputs after a user adds a new contact
 // TODO - add hover and active classes to buttons
 // TODO - consider adding pagination as well for the contacts
-// TODO - add character limit for the contact name
 
 export interface AlertContent {
 	isError: boolean;
@@ -160,6 +159,7 @@ export default function Contacts() {
 					<input
 						type="text"
 						placeholder="Name"
+						maxLength={50}
 						className="border-2 border-slate-400 outline-none w-full p-2 rounded"
 						onChange={e => setContactName(e.target.value)}
 					/>
