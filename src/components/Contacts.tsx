@@ -63,8 +63,13 @@ export default function Contacts() {
 		);
 
 		if (!isPossiblePhoneNumber(phoneNumber) && !contactName) {
-			createAlert(true, "Please provide a phone number and contact name", 2000);
-		} else if (isPossiblePhoneNumber(phoneNumber)) {
+			return createAlert(
+				true,
+				"Please provide a phone number and contact name",
+				2000
+			);
+		}
+		if (isPossiblePhoneNumber(phoneNumber)) {
 			if (contactName) {
 				const new_contact: Contact = {
 					id: uuidv4(),
@@ -74,6 +79,8 @@ export default function Contacts() {
 
 				if (contacts.length === 0) {
 					setContacts([new_contact]);
+					setContactName("");
+					setPhoneNumber("");
 					createAlert(false, "Successfully added contact!", 500);
 				} else {
 					let formattedPhoneNumber: string = formatPhoneNumberIntl(phoneNumber);
@@ -91,6 +98,8 @@ export default function Contacts() {
 					if (!duplicateFound) {
 						setContacts([new_contact, ...contacts]);
 						createAlert(false, "Successfully added contact!", 500);
+						setContactName("");
+						setPhoneNumber("");
 					} else {
 						createAlert(true, "Duplicate phone number found", 1000);
 					}
@@ -124,6 +133,19 @@ export default function Contacts() {
 			)} ${phoneNumber_dashes.slice(3, phoneNumber_dashes.length)}`
 		);
 		createAlert(false, "Copied contact!", 500);
+	}
+
+	function deleteContact(contact_id: string, contact_name: string) {
+		const confirmation: boolean = confirm(
+			`Are you sure you would like to delete the contact: "${contact_name}"?`
+		);
+
+		if (confirmation) {
+			const new_contacts: Contact[] = contacts.filter(
+				(contact: Contact) => contact.id !== contact_id
+			);
+			setContacts(new_contacts);
+		}
 	}
 
 	return (
@@ -185,11 +207,18 @@ export default function Contacts() {
 									<div className="flex flex-col w-full box-border">
 										<h2 className="text-xl font-bold">{contact.name}</h2>
 										<div className="flex justify-between items-center mt-2">
-											<p className="text-gray-400">{contact.phone_number}</p>
+											<p className="text-gray-400">{`${contact.phone_number
+												.replace(/\s+/g, "-")
+												.slice(0, 2)} ${contact.phone_number
+												.replace(/\s+/g, "-")
+												.slice(3, contact.phone_number.length)}`}</p>
 											<div className="flex items-center">
 												<FontAwesomeIcon
 													icon={faTrash}
 													className="ml-2 border-2 border-slate-400 rounded bg-red-400 p-1 hover:bg-red-500 text-zinc-100 hover:cursor-pointer active:bg-red-600"
+													onClick={() =>
+														deleteContact(contact.id, contact.name)
+													}
 												/>
 												<FontAwesomeIcon
 													icon={faPenToSquare}
