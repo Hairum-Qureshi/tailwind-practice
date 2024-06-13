@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import Alert from "./Alert";
 import PhoneInput, {
 	formatPhoneNumberIntl,
@@ -21,7 +21,6 @@ interface Contact {
 
 // TODO - add an edit and delete button -> when the user presses edit, populate the form fields with that contact's details
 // TODO - save to local storage
-// TODO - clear the inputs after a user adds a new contact
 // TODO - add hover and active classes to buttons
 // TODO - consider adding pagination as well for the contacts
 
@@ -62,11 +61,7 @@ export default function Contacts() {
 		);
 
 		if (!isPossiblePhoneNumber(phoneNumber) && !contactName) {
-			return createAlert(
-				true,
-				"Please provide a phone number and contact name",
-				2000
-			);
+			createAlert(true, "Please provide a phone number and contact name", 2000);
 		}
 		if (isPossiblePhoneNumber(phoneNumber)) {
 			if (contactName) {
@@ -78,9 +73,9 @@ export default function Contacts() {
 
 				if (contacts.length === 0) {
 					setContacts([new_contact]);
+					createAlert(false, "Successfully added contact!", 500);
 					setContactName("");
 					setPhoneNumber("");
-					createAlert(false, "Successfully added contact!", 500);
 				} else {
 					let formattedPhoneNumber: string = formatPhoneNumberIntl(phoneNumber);
 					let area_code: string = formattedPhoneNumber.substring(3, 6);
@@ -147,6 +142,14 @@ export default function Contacts() {
 		}
 	}
 
+	function editContact(contact_id: string, phone_number: string) {
+		const contact: Contact = contacts.find(
+			(contact: Contact) => contact.id === contact_id
+		)!;
+		setContactName(contact.name);
+		setPhoneNumber(phone_number);
+	}
+
 	return (
 		<div className="p-8 text-sky-950 absolute lg:relative top-16 w-full m-auto lg:w-2/3">
 			{showAlert && <Alert alertContent={alertContent} />}
@@ -160,6 +163,7 @@ export default function Contacts() {
 						type="text"
 						placeholder="Name"
 						maxLength={50}
+						value={contactName}
 						className="border-2 border-slate-400 outline-none w-full p-2 rounded"
 						onChange={e => setContactName(e.target.value)}
 					/>
@@ -174,12 +178,15 @@ export default function Contacts() {
 								"border-2 border-slate-400 outline-none w-full p-2 rounded"
 						}}
 						// className="border-2 border-slate-400 outline-none w-full p-2 rounded"
+						value={phoneNumber}
 						onChange={setPhoneNumber}
 					/>
 				</div>
 				<div className="mt-3">
 					<button
-						onClick={addContact}
+						onClick={() => {
+							addContact();
+						}}
 						className="border-2 rounded border-gray-500 bg-gray-200 p-2 font-Kanit flex m-auto"
 					>
 						Add Contact
@@ -223,6 +230,9 @@ export default function Contacts() {
 												<FontAwesomeIcon
 													icon={faPenToSquare}
 													className="ml-2 border-2 border-slate-400 active:text-white rounded bg-orange-400 p-1 hover:bg-orange-500 hover:cursor-pointer active:bg-orange-600"
+													onClick={() =>
+														editContact(contact.id, contact.phone_number)
+													}
 												/>
 												<FontAwesomeIcon
 													icon={faCopy}
