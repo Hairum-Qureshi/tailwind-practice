@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Alert from "./Alert";
 import PhoneInput, {
 	formatPhoneNumberIntl,
@@ -19,7 +19,6 @@ interface Contact {
 	phone_number: string;
 }
 
-// TODO - save to local storage
 // TODO - add hover and active classes to buttons
 // TODO - consider adding pagination as well for the contacts
 // TODO - consider adding a calculator to the site too
@@ -30,7 +29,10 @@ export interface AlertContent {
 }
 
 export default function Contacts() {
-	const [contacts, setContacts] = useState<Contact[]>([]);
+	const savedContacts: string | null = localStorage.getItem("contacts");
+	const [contacts, setContacts] = useState<Contact[]>(
+		savedContacts ? JSON.parse(savedContacts) : []
+	);
 	const [contactName, setContactName] = useState("");
 	const [phoneNumber, setPhoneNumber] = useState("");
 	const [showAlert, setShowAlert] = useState(false);
@@ -219,10 +221,12 @@ export default function Contacts() {
 			setContactName("");
 			setPhoneNumber("");
 			setEditMode(false);
-		} else {
-			console.log("x");
 		}
 	}
+
+	useEffect(() => {
+		localStorage.setItem("contacts", JSON.stringify(contacts));
+	}, [contacts]);
 
 	return (
 		<div className="p-8 text-sky-950 absolute lg:relative top-16 w-full m-auto lg:w-2/3">
