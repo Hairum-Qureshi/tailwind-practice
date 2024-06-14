@@ -158,6 +158,8 @@ export default function Contacts() {
 		// update the addContact function so the code checking if the user provided a contact name and phone number exists/not
 		// and so it also clears the inputs upon success
 
+		// If the user updates the phone number, make sure you format it in the way that it was prior to being edited (the logic in the addContact function might handle this also)
+
 		const foundContact: Contact = contacts.find(
 			(contact: Contact) => contact.id === contactID
 		)!;
@@ -174,9 +176,9 @@ export default function Contacts() {
 			)
 		);
 
+		setContactID("");
 		setContactName("");
 		setPhoneNumber("");
-
 		setEditMode(false);
 	}
 
@@ -249,7 +251,7 @@ export default function Contacts() {
 						filteredContacts.map((contact: Contact) => {
 							return (
 								<div
-									className="w-full box-border border-2 border-gray-200 p-2 mt-5 rounded-md bg-slate-100 flex select-none h-auto"
+									className="w-full box-border border-2 border-gray-200 p-2 mt-5 rounded-md bg-slate-100 flex select-none h-auto break-words"
 									key={contact.id}
 								>
 									<div className="flex flex-col w-full box-border">
