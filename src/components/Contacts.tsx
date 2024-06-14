@@ -65,6 +65,9 @@ export default function Contacts() {
 		if (editMode && phoneNumber === undefined && !contactName) {
 			createAlert(true, "Please provide a phone number and contact name", 2000);
 			return 404;
+		} else if (editMode && phoneNumber === undefined && contactName) {
+			createAlert(true, "Please provide a phone number", 2000);
+			return 404;
 		}
 
 		if (!isPossiblePhoneNumber(phoneNumber) && !contactName) {
@@ -194,11 +197,6 @@ export default function Contacts() {
 	}
 
 	function updateContact() {
-		// update the addContact function so the code checking if the user provided a contact name and phone number exists/not
-		// and so it also clears the inputs upon success
-
-		// If the user updates the phone number, make sure you format it in the way that it was prior to being edited (the logic in the addContact function might handle this also)
-
 		const foundContact: Contact = contacts.find(
 			(contact: Contact) => contact.id === contactID
 		)!;
@@ -269,14 +267,26 @@ export default function Contacts() {
 							Add Contact
 						</button>
 					) : (
-						<button
-							onClick={() => {
-								updateContact();
-							}}
-							className="border-2 rounded border-gray-500 bg-gray-200 p-2 font-Kanit flex m-auto"
-						>
-							Update Contact
-						</button>
+						<div className="flex justify-center">
+							<button
+								onClick={() => {
+									updateContact();
+								}}
+								className="border-2 rounded border-gray-500 bg-gray-200 p-2 font-Kanit"
+							>
+								Update Contact
+							</button>
+							<button
+								onClick={() => {
+									setEditMode(false);
+									setContactName("");
+									setPhoneNumber("");
+								}}
+								className="border-2 rounded border-red-500 bg-red-200 p-2 font-Kanit ml-2"
+							>
+								Cancel
+							</button>
+						</div>
 					)}
 				</div>
 			</div>
@@ -319,7 +329,11 @@ export default function Contacts() {
 													className="ml-2 border-2 border-slate-400 active:text-white rounded bg-orange-400 p-1 hover:bg-orange-500 hover:cursor-pointer active:bg-orange-600"
 													onClick={() => {
 														editContact(contact.id, contact.phone_number);
-														setEditMode(true);
+														setEditMode(!editMode);
+														if (editMode) {
+															setContactName("");
+															setPhoneNumber("");
+														}
 													}}
 												/>
 												<FontAwesomeIcon
