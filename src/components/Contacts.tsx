@@ -23,6 +23,7 @@ interface Contact {
 // TODO - save to local storage
 // TODO - add hover and active classes to buttons
 // TODO - consider adding pagination as well for the contacts
+// TODO - consider adding a calculator to the site too
 
 export interface AlertContent {
 	isError: boolean;
@@ -53,7 +54,7 @@ export default function Contacts() {
 		}, duration);
 	}
 
-	function addContact() {
+	function checks(): number {
 		let formattedPhoneNumber: string = formatPhoneNumberIntl(phoneNumber);
 		let area_code: string = formattedPhoneNumber.substring(3, 6);
 		const modifiedAreaCode: string = `(${area_code})`;
@@ -62,23 +63,18 @@ export default function Contacts() {
 			modifiedAreaCode
 		);
 
+		if (editMode && phoneNumber === undefined && !contactName) {
+			createAlert(true, "Please provide a phone number and contact name", 2000);
+			return 404;
+		}
+
 		if (!isPossiblePhoneNumber(phoneNumber) && !contactName) {
 			createAlert(true, "Please provide a phone number and contact name", 2000);
+			return 404;
 		}
 		if (isPossiblePhoneNumber(phoneNumber)) {
 			if (contactName) {
-				const new_contact: Contact = {
-					id: uuidv4(),
-					name: contactName,
-					phone_number: formattedPhoneNumber
-				};
-
-				if (contacts.length === 0) {
-					setContacts([new_contact]);
-					createAlert(false, "Successfully added contact!", 500);
-					setContactName("");
-					setPhoneNumber("");
-				} else {
+				if (contacts.length > 0) {
 					let formattedPhoneNumber: string = formatPhoneNumberIntl(phoneNumber);
 					let area_code: string = formattedPhoneNumber.substring(3, 6);
 					const modifiedAreaCode: string = `(${area_code})`;
@@ -92,16 +88,19 @@ export default function Contacts() {
 					);
 
 					if (!duplicateFound) {
-						setContacts([new_contact, ...contacts]);
-						createAlert(false, "Successfully added contact!", 500);
-						setContactName("");
-						setPhoneNumber("");
+						return 200;
 					} else {
-						createAlert(true, "Duplicate phone number found", 1000);
+						if (editMode) {
+							return 200;
+						} else {
+							createAlert(true, "Duplicate phone number found", 1000);
+							return 409;
+						}
 					}
 				}
 			} else {
 				createAlert(true, "Please make sure to provide a contact name", 2000);
+				return 404;
 			}
 		} else {
 			createAlert(
@@ -109,6 +108,41 @@ export default function Contacts() {
 				"Please double check if you have provided a phone number. If you have, check if it's in the correct format: (xxx)-xxx-xxxx",
 				2000
 			);
+
+			return 400;
+		}
+
+		return 200;
+	}
+
+	function addContact() {
+		let formattedPhoneNumber: string = formatPhoneNumberIntl(phoneNumber);
+		let area_code: string = formattedPhoneNumber.substring(3, 6);
+		const modifiedAreaCode: string = `(${area_code})`;
+		formattedPhoneNumber = formattedPhoneNumber.replace(
+			area_code,
+			modifiedAreaCode
+		);
+
+		const new_contact: Contact = {
+			id: uuidv4(),
+			name: contactName,
+			phone_number: formattedPhoneNumber
+		};
+
+		const status: number = checks();
+		if (status === 200 && contacts.length === 0) {
+			setContacts([new_contact]);
+			createAlert(false, "Successfully added contact!", 500);
+			setContactName("");
+			setPhoneNumber("");
+		} else {
+			if (status === 200) {
+				setContacts([new_contact, ...contacts]);
+				createAlert(false, "Successfully added contact!", 500);
+				setContactName("");
+				setPhoneNumber("");
+			}
 		}
 	}
 
@@ -170,16 +204,21 @@ export default function Contacts() {
 			phone_number: phoneNumber
 		};
 
-		setContacts(prevContacts =>
-			prevContacts.map(contact =>
-				contact.id === foundContact.id ? updatedContact : contact
-			)
-		);
+		const status: number = checks();
+		if (status === 200) {
+			setContacts(prevContacts =>
+				prevContacts.map(contact =>
+					contact.id === foundContact.id ? updatedContact : contact
+				)
+			);
 
-		setContactID("");
-		setContactName("");
-		setPhoneNumber("");
-		setEditMode(false);
+			setContactID("");
+			setContactName("");
+			setPhoneNumber("");
+			setEditMode(false);
+		} else {
+			console.log("x");
+		}
 	}
 
 	return (
@@ -293,8 +332,8 @@ export default function Contacts() {
 						})
 					) : (
 						<h1 className="text-xl text-center mt-5">
-							No contact found. Try searching a different name or adding a new
-							contact.
+							No contact(s) found. Try searching a different name or adding a
+							new contact.
 						</h1>
 					)}
 				</div>
