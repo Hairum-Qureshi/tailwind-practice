@@ -28,6 +28,9 @@ export default function Navbar() {
 							<li className="ml-4">
 								<Link to="/contacts">Contacts</Link>
 							</li>
+							<li className="ml-4">
+								<Link to="/money-tracker">Money Tracker</Link>
+							</li>
 						</ul>
 					</div>
 				</div>
@@ -56,6 +59,9 @@ export default function Navbar() {
 						</li>
 						<li>
 							<Link to="/contacts">Contacts</Link>
+						</li>
+						<li>
+							<Link to="/money-tracker">Money Tracker</Link>
 						</li>
 					</ul>
 				</div>

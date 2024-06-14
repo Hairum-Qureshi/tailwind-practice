@@ -6,6 +6,7 @@ import Contacts from "./Contacts";
 import "../css/App.css";
 import NotFound from "./NotFound";
 import TimeTracker from "./TimeTracker";
+import MoneyTracker from "./MoneyTracker";
 
 function App() {
 	return (
@@ -16,6 +17,7 @@ function App() {
 				<Route path="/time-tracker" element={<TimeTracker />} />
 				<Route path="/to-dos" element={<About />} />
 				<Route path="/contacts" element={<Contacts />} />
+				<Route path="/money-tracker" element={<MoneyTracker />} />
 				<Route path="*" element={<NotFound />} />
 			</Routes>
 		</BrowserRouter>
