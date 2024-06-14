@@ -61,7 +61,7 @@ export default function Navbar() {
 							<Link to="/contacts">Contacts</Link>
 						</li>
 						<li>
-							<Link to="/money-tracker">Money Tracker</Link>
+							<Link to="/finances">Finances</Link>
 						</li>
 					</ul>
 				</div>
