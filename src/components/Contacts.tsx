@@ -19,7 +19,6 @@ interface Contact {
 	phone_number: string;
 }
 
-// TODO - add an edit and delete button -> when the user presses edit, populate the form fields with that contact's details
 // TODO - save to local storage
 // TODO - add hover and active classes to buttons
 // TODO - consider adding pagination as well for the contacts
@@ -115,7 +114,7 @@ export default function Contacts() {
 		return 200;
 	}
 
-	function addContact() {
+	function formatPhoneNumber() {
 		let formattedPhoneNumber: string = formatPhoneNumberIntl(phoneNumber);
 		let area_code: string = formattedPhoneNumber.substring(3, 6);
 		const modifiedAreaCode: string = `(${area_code})`;
@@ -123,6 +122,12 @@ export default function Contacts() {
 			area_code,
 			modifiedAreaCode
 		);
+
+		return formattedPhoneNumber;
+	}
+
+	function addContact() {
+		const formattedPhoneNumber: string = formatPhoneNumber();
 
 		const new_contact: Contact = {
 			id: uuidv4(),
@@ -201,7 +206,7 @@ export default function Contacts() {
 		const updatedContact: Contact = {
 			id: foundContact.id,
 			name: contactName,
-			phone_number: phoneNumber
+			phone_number: formatPhoneNumber()
 		};
 
 		const status: number = checks();
