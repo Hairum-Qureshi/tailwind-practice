@@ -39,6 +39,8 @@ export default function Contacts() {
 		message: ""
 	});
 	const [searchPhrase, setSearchPhrase] = useState("");
+	const [editMode, setEditMode] = useState(false);
+	const [contactID, setContactID] = useState("");
 
 	function createAlert(isAnError: boolean, message: string, duration: number) {
 		setAlertContent({
@@ -143,11 +145,39 @@ export default function Contacts() {
 	}
 
 	function editContact(contact_id: string, phone_number: string) {
-		const contact: Contact = contacts.find(
+		const contactToUpdate: Contact = contacts.find(
 			(contact: Contact) => contact.id === contact_id
 		)!;
-		setContactName(contact.name);
+
+		setContactID(contact_id);
+		setContactName(contactToUpdate.name);
 		setPhoneNumber(phone_number);
+	}
+
+	function updateContact() {
+		// update the addContact function so the code checking if the user provided a contact name and phone number exists/not
+		// and so it also clears the inputs upon success
+
+		const foundContact: Contact = contacts.find(
+			(contact: Contact) => contact.id === contactID
+		)!;
+
+		const updatedContact: Contact = {
+			id: foundContact.id,
+			name: contactName,
+			phone_number: phoneNumber
+		};
+
+		setContacts(prevContacts =>
+			prevContacts.map(contact =>
+				contact.id === foundContact.id ? updatedContact : contact
+			)
+		);
+
+		setContactName("");
+		setPhoneNumber("");
+
+		setEditMode(false);
 	}
 
 	return (
@@ -183,14 +213,25 @@ export default function Contacts() {
 					/>
 				</div>
 				<div className="mt-3">
-					<button
-						onClick={() => {
-							addContact();
-						}}
-						className="border-2 rounded border-gray-500 bg-gray-200 p-2 font-Kanit flex m-auto"
-					>
-						Add Contact
-					</button>
+					{!editMode ? (
+						<button
+							onClick={() => {
+								addContact();
+							}}
+							className="border-2 rounded border-gray-500 bg-gray-200 p-2 font-Kanit flex m-auto"
+						>
+							Add Contact
+						</button>
+					) : (
+						<button
+							onClick={() => {
+								updateContact();
+							}}
+							className="border-2 rounded border-gray-500 bg-gray-200 p-2 font-Kanit flex m-auto"
+						>
+							Update Contact
+						</button>
+					)}
 				</div>
 			</div>
 			<div className="mt-2 p-2 w-full box-border rounded-md">
@@ -230,9 +271,10 @@ export default function Contacts() {
 												<FontAwesomeIcon
 													icon={faPenToSquare}
 													className="ml-2 border-2 border-slate-400 active:text-white rounded bg-orange-400 p-1 hover:bg-orange-500 hover:cursor-pointer active:bg-orange-600"
-													onClick={() =>
-														editContact(contact.id, contact.phone_number)
-													}
+													onClick={() => {
+														editContact(contact.id, contact.phone_number);
+														setEditMode(true);
+													}}
 												/>
 												<FontAwesomeIcon
 													icon={faCopy}
