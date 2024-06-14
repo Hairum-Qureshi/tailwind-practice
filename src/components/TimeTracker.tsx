@@ -216,6 +216,7 @@ export default function TimeTracker() {
 						<input
 							type="text"
 							value={newEditedTime}
+							maxLength={8}
 							className="p-1 text-2xl outline-none text-center bg-slate-300 w-full"
 							placeholder="Enter time in 00:00:00 format"
 							onChange={e => setNewEditedTime(e.target.value)}
