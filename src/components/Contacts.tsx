@@ -343,10 +343,7 @@ export default function Contacts() {
 														className="ml-2 border-2 border-slate-400 active:text-white rounded bg-orange-400 p-1 hover:bg-orange-500 hover:cursor-pointer active:bg-orange-600"
 														onClick={() => {
 															editContact(contact.id, contact.phone_number);
-															if (editMode) {
-																setContactName("");
-																setPhoneNumber("");
-															}
+															setEditMode(true);
 														}}
 													/>
 													<FontAwesomeIcon
