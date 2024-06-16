@@ -43,6 +43,8 @@ export default function Contacts() {
 	const [searchPhrase, setSearchPhrase] = useState("");
 	const [editMode, setEditMode] = useState(false);
 	const [contactID, setContactID] = useState("");
+	const [pages, setPages] = useState<number[]>([]);
+	const [currentPage, setCurrentPage] = useState(0);
 
 	function createAlert(isAnError: boolean, message: string, duration: number) {
 		setAlertContent({
@@ -228,6 +230,13 @@ export default function Contacts() {
 		localStorage.setItem("contacts", JSON.stringify(contacts));
 	}, [contacts]);
 
+	useEffect(() => {
+		const contactsPerPage = 1;
+		const pages = Math.ceil(filteredContacts.length / contactsPerPage);
+
+		console.log(pages);
+	}, [filteredContacts]);
+
 	return (
 		<div className="p-8 text-sky-950 absolute lg:relative top-16 w-full m-auto lg:w-2/3">
 			{showAlert && <Alert alertContent={alertContent} />}
@@ -308,49 +317,50 @@ export default function Contacts() {
 					{filteredContacts.length > 0 ? (
 						filteredContacts.map((contact: Contact) => {
 							return (
-								<div
-									className="w-full box-border border-2 border-gray-200 p-2 mt-5 rounded-md bg-slate-100 flex select-none h-auto break-words"
-									key={contact.id}
-								>
-									<div className="flex flex-col w-full box-border">
-										<h2 className="text-xl font-bold">{contact.name}</h2>
-										<div className="flex justify-between items-center mt-2">
-											<p className="text-gray-400">{`${contact.phone_number
-												.replace(/\s+/g, "-")
-												.slice(0, 2)} ${contact.phone_number
-												.replace(/\s+/g, "-")
-												.slice(3, contact.phone_number.length)}`}</p>
-											<div className="flex items-center">
-												<FontAwesomeIcon
-													icon={faTrash}
-													className="ml-2 border-2 border-slate-400 rounded bg-red-400 p-1 hover:bg-red-500 text-zinc-100 hover:cursor-pointer active:bg-red-600"
-													onClick={() =>
-														deleteContact(contact.id, contact.name)
-													}
-												/>
-												<FontAwesomeIcon
-													icon={faPenToSquare}
-													className="ml-2 border-2 border-slate-400 active:text-white rounded bg-orange-400 p-1 hover:bg-orange-500 hover:cursor-pointer active:bg-orange-600"
-													onClick={() => {
-														editContact(contact.id, contact.phone_number);
-														setEditMode(!editMode);
-														if (editMode) {
-															setContactName("");
-															setPhoneNumber("");
+								<>
+									<div
+										className="w-full box-border border-2 border-gray-200 p-2 mt-5 rounded-md bg-slate-100 flex select-none h-auto break-words"
+										key={contact.id}
+									>
+										<div className="flex flex-col w-full box-border">
+											<h2 className="text-xl font-bold">{contact.name}</h2>
+											<div className="flex justify-between items-center mt-2">
+												<p className="text-gray-400">{`${contact.phone_number
+													.replace(/\s+/g, "-")
+													.slice(0, 2)} ${contact.phone_number
+													.replace(/\s+/g, "-")
+													.slice(3, contact.phone_number.length)}`}</p>
+												<div className="flex items-center">
+													<FontAwesomeIcon
+														icon={faTrash}
+														className="ml-2 border-2 border-slate-400 rounded bg-red-400 p-1 hover:bg-red-500 text-zinc-100 hover:cursor-pointer active:bg-red-600"
+														onClick={() =>
+															deleteContact(contact.id, contact.name)
 														}
-													}}
-												/>
-												<FontAwesomeIcon
-													icon={faCopy}
-													onClick={() =>
-														copyContact(contact.name, contact.phone_number)
-													}
-													className="ml-2 border-2 border-slate-400 rounded bg-blue-400 p-1 hover:bg-blue-500 hover:text-white hover:cursor-pointer active:bg-blue-600"
-												/>
+													/>
+													<FontAwesomeIcon
+														icon={faPenToSquare}
+														className="ml-2 border-2 border-slate-400 active:text-white rounded bg-orange-400 p-1 hover:bg-orange-500 hover:cursor-pointer active:bg-orange-600"
+														onClick={() => {
+															editContact(contact.id, contact.phone_number);
+															if (editMode) {
+																setContactName("");
+																setPhoneNumber("");
+															}
+														}}
+													/>
+													<FontAwesomeIcon
+														icon={faCopy}
+														onClick={() =>
+															copyContact(contact.name, contact.phone_number)
+														}
+														className="ml-2 border-2 border-slate-400 rounded bg-blue-400 p-1 hover:bg-blue-500 hover:text-white hover:cursor-pointer active:bg-blue-600"
+													/>
+												</div>
 											</div>
 										</div>
 									</div>
-								</div>
+								</>
 							);
 						})
 					) : (
