@@ -44,3 +44,11 @@ So the key value will be an array of strings holding "Kanit" and "sans-serif" li
 And that's it. Still confused? Refer to: https://stackoverflow.com/a/73330858/13215593
 
 5. `m-auto` not aligning content in the center? Make sure to include `flex`
+
+6. If you want to use absolute and w-full, but are experiencing w-full to take the entire width of the screen and not the parent container the div is in, make sure that parent div has a position of `relative`. So it'll look something like this:
+
+```html
+   <div className = "w-1/2 border-2 border-black relative"> <!-- <-- parent div -->
+     <div className = "w-full absolute bottom-0 border-2 border-red-600"><h1>Content to go at the bottom of the div</h1></div>
+   </div>
+```
